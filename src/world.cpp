@@ -274,12 +274,18 @@ void world::spawn_enemies()
 }
 void world::add_enemies()
 {
-    //coordinates are interpreted relative to the player
-    add_enemy(monster::type::small_mutant, 90, -180);
+    int xpos, ypos, type;
+    std::ifstream monster_file;
+    monster_file.open("src/dat/monsters.bb");
+    while (monster_file >> type >> xpos >> ypos)
+    {
+
+        add_enemy(static_cast<monster::type>(type), xpos, ypos);
+    }
 }
 void world::add_enemy(monster::type mtype, float x, float y)
 {
-    spawn_point new_p(mtype, the_player->getPosition().x + x, the_player->getPosition().y + y);
+    spawn_point new_p(mtype, x, y);
     enemy_spawn_points.push_back(new_p);
 }
 world::spawn_point::spawn_point(monster::type fstype, float fx, float fy)

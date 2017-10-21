@@ -1,5 +1,15 @@
 #include "collision_manager.h"
 
+float fastsqrt(float x)
+ {
+   unsigned int i = *(unsigned int*) &x;
+   // adjust bias
+   i  += 127 << 23;
+   // approximation of square root
+   i >>= 1;
+   return *(float*) &i;
+ }
+
 namespace
 {
     std::vector<monster_data> mon_data = init_monster_data();
@@ -379,20 +389,19 @@ void collision_manager::do_ai()
     for (monster* each_monster : monsters)
     {
         sf::Vector2f diff = each_monster->getPosition() - the_player->getPosition();
-        distance_squared = pow(diff.x, 2) + pow(diff.y, 2);
+        distance_squared = diff.x * diff.x + diff.y * diff.y;
         switch (each_monster->get_type())
         {
             case monster::type::player: break;
             case monster::type::small_mutant:
-                //std::cout << distance_squared << std::endl;
                 switch (each_monster->current_ai_state)
                 {
                     case ai_state::sleep_state:
-                        if (distance_squared < 20000.f)
+                        if (distance_squared <= 20000.f)
                         {
                             //create a 1 pixel wide line, stretch it from the player to the monster, and perform SAT test upon it and the walls
                             //this is a very expensive operation
-                            float length = pow(distance_squared, 0.5f);
+                            float length = fastsqrt(distance_squared);
                             diff *= 0.5f;
                             sf::Vector2f v(length, .5f);
                             sf::RectangleShape line(v);
@@ -404,7 +413,7 @@ void collision_manager::do_ai()
                                 if (special_collisions.BoundingBoxTest(line, *each_wall) == true)
                                 {
                                     los_found = false;
-                                    //break;
+                                    break;
                                 }
                             }
                             if (los_found == true)
@@ -415,7 +424,6 @@ void collision_manager::do_ai()
                         else
                         {
                             each_monster->set_velocity(0,0);
-                            return;
                         }
                         break;
                     case ai_state::attack_state:

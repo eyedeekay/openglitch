@@ -10,7 +10,7 @@ projectile::projectile(type pptype, const texture_manager& textures, float sp, i
     explosion(textures, animation::type::explosion)
 {
     explosion.scale(0.4f, 0.4f);
-	sprite.scale(0.3f, 0.5f);
+	sprite.scale(0.3f, .8f);
 	speed = sp;
 	damage = dmg;
 }

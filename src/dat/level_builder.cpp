@@ -3,90 +3,81 @@
 #include <iostream>
 #include <fstream>
 #include <SFML/System.hpp>
-#include "ncurses.h"
+#include "room.h"
 const int maxX = 400;
 const int maxY = 400;
-void build_wall(int** walls, sf::Vector2i start_pos, sf::Vector2i end_pos);
-void build_room(int** walls, sf::Vector2i top_left, sf::Vector2i bottom_right);
-void create_opening(int** walls, sf::Vector2i start_pos, sf::Vector2i end_pos);
+void resolve_walls();
 int main(int argc, char **argv)
 {
-	std::ofstream walls_file;
-	walls_file.open("walls.bb", std::ios::trunc);
-	int** walls = new int*[maxX];
-	for (int x = 0; x < maxX; x++)
-	{
-		walls[x] = new int[maxY];
-	}
-	for (int x = 0; x < maxX; x++)
-	{
-		for (int y = 0; y < maxY; y++)
-		{
-			walls[x][y] = -1;
-		}
-	}
+	std::vector<room> rooms;
+	std::ofstream wall_file;
+	wall_file.open("walls.bb", std::ios::trunc);
+	std::ofstream pickup_file;
+	pickup_file.open("pickups.bb", std::ios::trunc);
+	std::ofstream monster_file;
+	monster_file.open("monsters.bb", std::ios::trunc);
 	
+	rooms.push_back(room(sf::Vector2f(140, 150), sf::Vector2f(190, 165), 0));
+	rooms.push_back(room(sf::Vector2f(180, 180), sf::Vector2f(220, 220), 1));
+	rooms.push_back(room(sf::Vector2f(190, 120), sf::Vector2f(210, 180), 2));
+	rooms.push_back(room(sf::Vector2f(210, 160), sf::Vector2f(250, 170), 3));
+	rooms.push_back(room(sf::Vector2f(230, 140), sf::Vector2f(240, 160), 4));
+	rooms.push_back(room(sf::Vector2f(230, 120), sf::Vector2f(260, 140), 5));
+	rooms.at(1).add_pickup(2);
+	rooms.at(1).add_pickup(3);
+	rooms.at(0).add_pickup(4);
+	rooms.at(0).add_monster(0);
+	rooms.at(4).add_monster(0);
+	rooms.at(3).add_pickup(5);
+	rooms.at(5).add_pickup(6);
+	rooms.at(5).add_pickup(7);
+	rooms.at(5).add_monster(0);
 	
-	build_room(walls, sf::Vector2i(180, 180), sf::Vector2i(220, 220));
-	build_room(walls, sf::Vector2i(190, 120), sf::Vector2i(210, 180));
-	build_room(walls, sf::Vector2i(140, 150), sf::Vector2i(190, 165));
-	build_room(walls, sf::Vector2i(210, 160), sf::Vector2i(250, 170));
-	build_room(walls, sf::Vector2i(230, 160), sf::Vector2i(240, 140)); 
-	//create_opening(walls, sf::Vector2i(195, 180), sf::Vector2i(205, 180));
-	//create_opening(walls, sf::Vector2i(190, 165), sf::Vector2i(190, 160));
-	for (int x = 0; x < maxX; x++)
+	for (room each_room : rooms)
 	{
-		for (int y = 0; y < maxY; y++)
-		{
-			if (walls[x][y] == 1)
-			{
-				//std::cout << "#";
-				walls_file << 1 << " " << x * 5 << " " << y * 5 << std::endl;
-			}
-			//else std::cout << ".";
-		}
-		std::cout << std::endl;
+		each_room.write_to_files(wall_file, pickup_file, monster_file);
 	}
-	walls_file.close();
+	monster_file.close();
+	pickup_file.close();
+	wall_file.close();
+	resolve_walls();
 	return 0;
 }
-void build_wall(int** walls, sf::Vector2i start_pos, sf::Vector2i end_pos)
+void resolve_walls()
 {
-	int x1 = start_pos.x;
-	int x2 = end_pos.x;
-	int y2 = end_pos.y;
-	int y1 = start_pos.y;
-	if (x1 > x2) std::swap(x1, x2);
-	if (y1 > y2) std::swap(y1, y2);
-	for (int x = x1; x <= x2; x++)
+	std::ifstream walls_file;
+	walls_file.open("walls.bb");
+	std::vector<sf::Vector2f> in, out;
+	int type, x, y;
+	while (walls_file >> type >> x >> y)
 	{
-		for (int y = y1; y <= y2; y++)
-		{
-			if (walls[x][y] == -1) walls[x][y] = 1;
-			else walls[x][y] = -1;
-		}
+		in.push_back(sf::Vector2f(x, y));
 	}
-}
-void build_room(int** walls, sf::Vector2i top_left, sf::Vector2i bottom_right)
-{
-	build_wall(walls, top_left, sf::Vector2i(bottom_right.x, top_left.y));
-	build_wall(walls, top_left, sf::Vector2i(top_left.x, bottom_right.y));
-	build_wall(walls, bottom_right, sf::Vector2i(bottom_right.x, top_left.y));
-	build_wall(walls, bottom_right, sf::Vector2i(top_left.x, bottom_right.y));
-}
-void create_opening(int** walls, sf::Vector2i start_pos, sf::Vector2i end_pos)
-{
-	int x1 = start_pos.x;
-	int x2 = end_pos.x;
-	int y2 = end_pos.y;
-	int y1 = start_pos.y;
-	if (x1 > x2) std::swap(x1, x2);
-	if (y1 > y2) std::swap(y1, y2);
-	for (int x = x1; x <= x2; x++)
+	walls_file.close();
+	
+	
+	for (std::vector<sf::Vector2f>::iterator check_iter = in.begin();
+			check_iter != in.end();
+			check_iter++)
 	{
-		for (int y = y1; y <= y2; y++)
+		bool unique = true;
+		for (std::vector<sf::Vector2f>::iterator against_iter = ++in.begin();
+				against_iter != in.end();
+				against_iter++)
 		{
-			walls[x][y] = -1;
+			if (*check_iter == *against_iter && check_iter != against_iter)
+			{
+				unique = false;
+			}
 		}
+		if (unique) out.push_back(*check_iter);
 	}
+	
+	std::ofstream walls_out;
+	walls_out.open("walls.bb");
+	for (sf::Vector2f each : out)
+	{
+		walls_out << 1 << " " << each.x << " " << each.y << std::endl;
+	}
+	walls_out.close();
 }

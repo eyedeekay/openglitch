@@ -112,7 +112,7 @@ const bool LIMIT_FPS = false;
 const short int AA_LEVEL = 0;
 const float PSPEED = 38.f;
 const float SENSITIVITY  = 2; //higher numbers are less sensitive
-const float UPPER_ZOOM_LIMIT = 0.3f;
+const float UPPER_ZOOM_LIMIT = 1.f;
 const float LOWER_ZOOM_LIMIT = 0.1f;
 //something to do with how the cursor resizes with zooming
 const float CURS_SCALE = 2.4f;
