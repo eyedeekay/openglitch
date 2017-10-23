@@ -11,6 +11,9 @@ struct monster_data
     textures::ID texture;
     sf::IntRect texture_rect;
     animation::type walk_animation;
+    animation::type death_animation;
+    textures::ID death_texture;
+    sf::IntRect death_texture_rect;
     int melee_damage;
 };
 struct bullet_data

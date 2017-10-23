@@ -27,6 +27,7 @@ void world::load_textures()
     textures.load(textures::explosions, "src/gfx/explosions.png");
     textures.load(textures::player_walk, "src/gfx/player_walk.png");
     textures.load(textures::small_mutant_walk, "src/gfx/small_mutant_walk.png");
+    textures.load(textures::small_mutant_death, "src/gfx/small_mutant_death.png");
     fonts.load(fonts::pixel,          "src/pixel.ttf");
 }
 void world::build_scene()
@@ -153,18 +154,9 @@ void world::draw()
     wwindow.draw(*the_cursor);
     if (the_player->is_aiming)
     {
-        //draw the 'line' between the player and the reticle
-        sf::Vector2f line_center = (the_cursor->getPosition() - the_player->getPosition());
-        float length = sqrt(pow(line_center.x, 2) + pow(line_center.y, 2)) - 10;
-        line_center *= 0.5f;
-        sf::Vector2f v(length, 0.75f);
-        sf::RectangleShape line(v);
-        line.setOrigin(length / 2, 0.5);
-        line.setPosition(the_player->getPosition() + line_center);
-        line.setFillColor(sf::Color(255, 255, 255, 40));
-        line.setRotation(atan2(line_center.y, line_center.x) * 180.f/PI);
-        wwindow.draw(line);
+        draw_reticle_line();
     }
+    wwindow.draw(*the_player);
 }
 void world::update(sf::Time delta)
 {
@@ -339,4 +331,18 @@ int world::get_player_hp()
 monster* world::get_player()
 {
     return the_player;
+}
+void world::draw_reticle_line()
+{
+    //draw the 'line' between the player and the reticle
+    sf::Vector2f line_center = (the_cursor->getPosition() - the_player->getPosition());
+    float length = sqrt(pow(line_center.x, 2) + pow(line_center.y, 2)) - 10;
+    line_center *= 0.5f;
+    sf::Vector2f v(length, 0.75f);
+    sf::RectangleShape line(v);
+    line.setOrigin(length / 2, 0.5);
+    line.setPosition(the_player->getPosition() + line_center);
+    line.setFillColor(sf::Color(255, 255, 255, 40));
+    line.setRotation(atan2(line_center.y, line_center.x) * 180.f/PI);
+    wwindow.draw(line);
 }

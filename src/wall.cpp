@@ -5,24 +5,12 @@ wall::wall(type wtype, const texture_manager& textures) : wall_type(wtype),
 {
     sf::FloatRect bounds = 	sprite.getLocalBounds();
 	sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-	sprite.setScale(0.5f, 0.5f);;
+	sprite.setScale(0.5f, 0.5f);
 }
 void wall::draw_current(sf::RenderTarget& target, sf::RenderStates states) const
 {
     if (draw_this)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P))
-        {
-            sf::Vector2f v(getBoundingRect().width, getBoundingRect().height);
-            sf::RectangleShape collide_rect(v);
-            sf::FloatRect bounds = 	collide_rect.getLocalBounds();
-            collide_rect.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-            collide_rect.setPosition(getPosition());
-            collide_rect.setOutlineColor(sf::Color::Black);
-            collide_rect.setFillColor(sf::Color(0,0,0,0));
-            collide_rect.setOutlineThickness(.5f);
-            target.draw(collide_rect);
-        }
         target.draw(sprite, states);
     }
 }

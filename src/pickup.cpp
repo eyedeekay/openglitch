@@ -35,16 +35,18 @@ void pickup::draw_current(sf::RenderTarget& target, sf::RenderStates states) con
 {
     if (draw_this)
     {
-        sf::Vector2f v(getBoundingRect().width, getBoundingRect().height);
-        sf::RectangleShape collide_rect(v);
-        sf::FloatRect bounds = 	collide_rect.getLocalBounds();
-        collide_rect.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-        collide_rect.setPosition(getPosition());
-        collide_rect.setOutlineColor(sf::Color::Black);
-        collide_rect.setFillColor(sf::Color(0,0,0,0));
-        collide_rect.setOutlineThickness(.5f);
-        target.draw(sprite, states);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)) target.draw(collide_rect);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P))
+        {
+            sf::Vector2f v(getBoundingRect().width, getBoundingRect().height);
+            sf::RectangleShape collide_rect(v);
+            sf::FloatRect bounds = 	collide_rect.getLocalBounds();
+            collide_rect.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+            collide_rect.setPosition(getPosition());
+            collide_rect.setOutlineColor(sf::Color::Black);
+            collide_rect.setFillColor(sf::Color(0,0,0,0));
+            collide_rect.setOutlineThickness(.5f);
+            target.draw(collide_rect);
+        }
         if (draw_outline)
         {
             sf::Vector2f v2(getBoundingRect().width, getBoundingRect().height);
@@ -52,10 +54,11 @@ void pickup::draw_current(sf::RenderTarget& target, sf::RenderStates states) con
             outline_circle.setPosition(getPosition());
             outline_circle.setFillColor(sf::Color(0,0,0,0));
             outline_circle.setOutlineColor(sf::Color::White);
-            outline_circle.setOutlineThickness(0.15f);
+            outline_circle.setOutlineThickness(0.25f);
             outline_circle.setOrigin(outline_circle.getRadius(), outline_circle.getRadius());
             target.draw(outline_circle);
         }
+        target.draw(sprite, states);
     }
 }
 pickup::~pickup()

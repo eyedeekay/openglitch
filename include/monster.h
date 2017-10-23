@@ -140,6 +140,8 @@ class monster : public entity
 		type monster_type;
 		sf::Sprite sprite;
 		animation walk_animation;
+		animation death_animation;
+		sf::Sprite death_sprite;
 		text_node* health_text;
 
 		bool removal_mark;

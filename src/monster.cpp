@@ -11,9 +11,11 @@ namespace
 monster::monster(monster::type mtype, const texture_manager& textures, const resource_manager<sf::Font, fonts::ID>& fonts, collision_manager& manager) :
 				 monster_type(mtype),
 				 sprite(textures.get(monsters[mtype].texture), monsters[mtype].texture_rect),
+				 death_sprite(textures.get(monsters[mtype].death_texture), monsters[mtype].death_texture_rect),
 				 entity(monsters[mtype].healthpoints),
 				 cmanager(manager),
 				 walk_animation(textures, monsters[mtype].walk_animation),
+				 death_animation(textures, monsters[mtype].death_animation),
 				 current_ai_state(ai_state::sleep_state)
 
 {
@@ -24,6 +26,8 @@ monster::monster(monster::type mtype, const texture_manager& textures, const res
         };
 	sf::FloatRect bounds = 	sprite.getLocalBounds();
 	sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+	//TODO figure out why this 0.5f is needed
+	death_sprite.setOrigin((bounds.width / 2.f) + 0.5f, bounds.height / 2.f);
 	fire_cooldown = sf::Time::Zero;
 
 	std::unique_ptr<text_node> tx(new text_node(fonts, ""));
@@ -68,8 +72,13 @@ void monster::draw_current(sf::RenderTarget& target,
             target.draw(outline_circle);
         }
         //if we're sitting still or aiming, use the standard sprite
-        if (walk_animation.get_type() == animation::type::none || is_aiming || get_velocity() == sf::Vector2f(0.f,0.f)) target.draw(sprite, states);
+        if ((walk_animation.get_type() == animation::type::none || is_aiming || get_velocity() == sf::Vector2f(0.f,0.f)) && (!is_dead())) target.draw(sprite, states);
         //otherwise show the walking animation
+        else if (is_dead())
+        {
+            if (!death_animation.is_finished()) target.draw(death_animation, states);
+            else target.draw(death_sprite, states);
+        }
         else target.draw(walk_animation, states);
     }
 }
@@ -88,6 +97,13 @@ unsigned int monster::get_category() const
 }
 void monster::update_current(sf::Time delta, command_queue& cmds)
 {
+    if (is_dead())
+    {
+        death_animation.update(delta);
+        disable_outline();
+        //prevents monsters from updating further
+        return;
+    }
     if (draw_outline) health_text->set_string(std::to_string(get_hp()) + " hp");
     else health_text->set_string("");
     health_text->setPosition(-4.f, -7.f);
@@ -95,10 +111,10 @@ void monster::update_current(sf::Time delta, command_queue& cmds)
 
 
 
-    if (get_velocity() != sf::Vector2f(0.f, 0.f));
-        {
-            last_velocity = get_velocity();
-        }
+    if (get_velocity() != sf::Vector2f(0.f, 0.f))
+    {
+        last_velocity = get_velocity();
+    }
 
     if (hit_wall)
     {
@@ -110,7 +126,7 @@ void monster::update_current(sf::Time delta, command_queue& cmds)
     if (is_aiming)
     {
         sf::Vector2f v(get_velocity());
-        v = v * 0.5f;
+        v = v * 0.65f;
         set_velocity(v);
     }
 
@@ -119,7 +135,6 @@ void monster::update_current(sf::Time delta, command_queue& cmds)
 
     check_launch(delta, cmds);
 
-    if (get_hp() <= 0) removal_mark = true;
 
     if (!is_aiming)
     {
@@ -135,9 +150,11 @@ void monster::update_current(sf::Time delta, command_queue& cmds)
             point = (getPosition() + last_velocity);
         }
         sf::Vector2f diff(point - getPosition());
-        point_towards = (atan2(diff.y, diff.x) * 180/PI);
+        point_towards = (atan2(diff.y, diff.x) * 180.f/PI);
         walk_animation.setRotation(point_towards);
         sprite.setRotation(point_towards);
+        death_sprite.setRotation(point_towards);
+        death_animation.setRotation(point_towards);
         //update walking animation
         if (get_velocity() != sf::Vector2f(0,0)) walk_animation.update(delta);
     }
@@ -209,7 +226,7 @@ void monster::create_projectile(scene_node& node, projectile::type ptype, float 
     float spread = dis(*generator) / 4;
     theta += (spread / weapons[weapon].spread);
     sf::Vector2f v(hyp * cos(theta), hyp * sin(theta));
-    proj->setPosition(getPosition() + (v * 0.02f));
+    proj->setPosition(getPosition());// + (v * 0.01f));
     proj->setRotation(sprite.getRotation() - 180.f);
     proj->set_velocity(v);
 

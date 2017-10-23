@@ -62,6 +62,7 @@ class world : public sf::NonCopyable
         void destroy_OOB_entities();
         void load_walls();
         void load_pickups();
+        void draw_reticle_line();
     private:
          collision_manager cmanager;
          sf::RenderWindow& wwindow;

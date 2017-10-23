@@ -196,12 +196,8 @@ void collision_manager::monster_bullet_collisions(command_queue& cmds)
     {
         for (projectile* each_bullet : bullets)
         {
-            //std::cout << "attempting to collide bullet: " << each_bullet << std::endl;
             if (each_bullet->getBoundingRect().intersects(each_mstr->getBoundingRect()))
             {
-                //std::cout << "current bullets:\n";
-                //for (projectile* p_each : bullets) std::cout << p_each << std::endl;
-                //std::cout << std::endl;
                 each_mstr->damage(each_bullet->get_damage());
                 each_bullet->destroy();
                 remove_bullet.push_back(each_bullet);

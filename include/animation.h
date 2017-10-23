@@ -11,6 +11,7 @@ class animation : public sf::Drawable, public sf::Transformable
             explosion,
             player_walk,
             small_mutant_walk,
+            small_mutant_death,
             none,
             animation_type_count
         };

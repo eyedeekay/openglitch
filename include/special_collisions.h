@@ -53,14 +53,14 @@ public:
      *
      static bool PixelPerfectTest(const sf::Sprite& Object1 ,const sf::Sprite& Object2, sf::Uint8 AlphaLimit = 127);
 
-    /**
+    *
      *  Test for collision using circle collision dection
      *  Radius is averaged from the dimesnions of the sprite so
      *  roughly circular objects will be much more accurate
      *
     static bool CircleTest(const sf::Sprite& Object1, const sf::Sprite& Object2);
 
-    /**
+    *
      *  Test for bounding box collision using OBB Box.
      *  To test against AABB use PixelPerfectTest with AlphaLimit = 0
      *

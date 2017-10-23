@@ -11,9 +11,12 @@ std::vector<monster_data> init_monster_data()
     data[monster::type::small_mutant].healthpoints = 65;
     data[monster::type::small_mutant].speed = 30;
     data[monster::type::small_mutant].texture = textures::entities;
-    data[monster::type::small_mutant].texture_rect = sf::IntRect(26,0,5,7);
+    data[monster::type::small_mutant].texture_rect = sf::IntRect(26, 0, 5, 7);
     data[monster::type::small_mutant].walk_animation = animation::type::small_mutant_walk;
     data[monster::type::small_mutant].melee_damage = 4;
+    data[monster::type::small_mutant].death_animation = animation::type::small_mutant_death;
+    data[monster::type::small_mutant].death_texture = textures::entities;
+    data[monster::type::small_mutant].death_texture_rect = sf::IntRect(26, 7, 5, 7);
     return data;
 }
 std::vector<bullet_data> init_bullet_data()
@@ -117,5 +120,11 @@ std::vector<animation_data> init_animation_data()
     data[animation::type::small_mutant_walk].frame_size = sf::Vector2i(18, 7);
     data[animation::type::small_mutant_walk].num_frames = 4;
     data[animation::type::small_mutant_walk].repeat = true;
+    data[animation::type::small_mutant_death].texture = textures::small_mutant_death;
+    data[animation::type::small_mutant_death].texture_rect = sf::IntRect(0, 0, 90, 7);
+    data[animation::type::small_mutant_death].duration = sf::milliseconds(800);
+    data[animation::type::small_mutant_death].frame_size = sf::Vector2i(18, 7);
+    data[animation::type::small_mutant_death].num_frames = 5;
+    data[animation::type::small_mutant_death].repeat = false;
     return data;
 }

@@ -10,7 +10,7 @@ projectile::projectile(type pptype, const texture_manager& textures, float sp, i
     explosion(textures, animation::type::explosion)
 {
     explosion.scale(0.4f, 0.4f);
-	sprite.scale(0.3f, .8f);
+	sprite.scale(0.4f, .8f);
 	speed = sp;
 	damage = dmg;
 }
@@ -44,7 +44,7 @@ void projectile::update_current(sf::Time delta, command_queue& cmds)
     if (is_dead())
     {
         explosion.update(delta);
-        //this prevents dead aircraft from doing any further logic
+        //this prevents dead bullets from doing any further logic
         return;
     }
     last_position = getPosition();

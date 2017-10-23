@@ -25,6 +25,7 @@ namespace textures
               floors,
               player_walk,
               small_mutant_walk,
+              small_mutant_death,
               };
 }
 namespace sounds
@@ -109,7 +110,7 @@ const float PI = 3.14159265359f;
 const float FPS = 60.f;
 const bool VSYNC = true;
 const bool LIMIT_FPS = false;
-const short int AA_LEVEL = 0;
+const short int AA_LEVEL = 4;
 const float PSPEED = 38.f;
 const float SENSITIVITY  = 2; //higher numbers are less sensitive
 const float UPPER_ZOOM_LIMIT = 1.f;
@@ -118,7 +119,6 @@ const float LOWER_ZOOM_LIMIT = 0.1f;
 const float CURS_SCALE = 2.4f;
 //debug text is updated DEBUG_DRAW_UPS times per second
 const int DEBUG_DRAW_UPS = 6;
-//0 for non-deterministic but smoother
-//1 for deterministic but not smooth at all
+//method 1 put on hold
 const int UPDATE_METHOD = 0;
 #endif
