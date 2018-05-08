@@ -1,9 +1,9 @@
 #ifndef INCLUDE_H
 #define INCLUDE_H
-#include "/usr/local/./include/SFML/Window.hpp"
-#include "/usr/local/./include/SFML/Graphics.hpp"
-#include "/usr/local/./include/SFML/System.hpp"
-#include "/usr/local/./include/SFML/Audio.hpp"
+#include "/usr/include/SFML/Window.hpp"
+#include "/usr/include/SFML/Graphics.hpp"
+#include "/usr/include/SFML/System.hpp"
+#include "/usr/include/SFML/Audio.hpp"
 #include <cassert>
 #include <iostream>
 #include <iomanip>

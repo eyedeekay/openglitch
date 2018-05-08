@@ -1,7 +1,7 @@
 #ifndef SPRITE_NODE_H
 #define SPRITE_NODE_H
 
-#include <scene_node.h>
+#include "scene_node.h"
 
 
 class sprite_node : public scene_node
